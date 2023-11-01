@@ -3,8 +3,6 @@ package com.dev.junit.service;
 import com.dev.junit.dto.User;
 
 import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import static java.util.function.Function.*;
 import static java.util.stream.Collectors.*;
