@@ -6,9 +6,12 @@ import org.hamcrest.MatcherAssert;
 import org.hamcrest.collection.IsMapContaining;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.*;
 
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.hamcrest.collection.IsEmptyCollection.*;
@@ -137,5 +140,38 @@ class UserServiceTest {
 
             assertTrue(maybeUser.isEmpty());
         }
+
+        @ParameterizedTest(name = "{arguments} test")
+        //@ArgumentsSource()
+        //@NullSource // Работает только с одним параметром.
+        //@EmptySource // Работает только с одним параметром.
+        //@NullAndEmptySource
+        //@ValueSource // Работает только с одним параметром.
+        /*@ValueSource(strings = {
+                "Ivan", "Petr"
+        })*/
+        //@EnumSource // Используется только тогда когда у нас есть Enum всесто приметивных типов.
+        @MethodSource("com.dev.junit.service.UserServiceTest#getArgumentsForLoginTest")
+        //@CsvFileSource(resources = "/login-test-data.csv", delimiter = ',', numLinesToSkip = 1)
+        /*@CsvSource({
+                "Ivan,123",
+                "Petr,111"
+        })*/
+        @DisplayName("login param test")
+        void loginParameterizedTest(String username, String password, Optional<User> user) {
+            userService.add(IVAN, PETR);
+
+            var maybeUser = userService.login(username, password);
+            assertThat(maybeUser).isEqualTo(user);
+        }
+    }
+
+    static Stream<Arguments> getArgumentsForLoginTest() {
+        return Stream.of(
+                Arguments.of("Ivan", "123", Optional.of(IVAN)),
+                Arguments.of("Petr", "111", Optional.of(PETR)),
+                Arguments.of("Petr", "dummy", Optional.empty()),
+                Arguments.of("dummy", "123", Optional.empty())
+        );
     }
 }
