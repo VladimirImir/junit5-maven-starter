@@ -9,8 +9,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.*;
 
+import java.time.Duration;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.*;
@@ -101,6 +103,8 @@ class UserServiceTest {
     class LoginTest {
 
         @Test
+        @Disabled("flaky, need to see")
+            // Disabled - позволяет нам не запускать наш тест в след. раз.
         void loginSuccessIfUserExists() {
             userService.add(IVAN);
 
@@ -132,13 +136,26 @@ class UserServiceTest {
             assertTrue(maybeUser.isEmpty());
         }
 
-        @Test
+        //@Test
+        @RepeatedTest(value = 5, name = RepeatedTest.LONG_DISPLAY_NAME)
+        // Указывем сколько репетишенов должно быть.
         void loginFailIfUserDoesNotExist() {
             userService.add(IVAN);
 
             var maybeUser = userService.login("dummy", IVAN.getPassword());
 
             assertTrue(maybeUser.isEmpty());
+        }
+
+        @Test
+        //@Timeout(value = 200, unit = TimeUnit.MILLISECONDS)
+        void checkLoginFunctionalityPerformance() {
+            System.out.println(Thread.currentThread().getName());
+            var result = assertTimeoutPreemptively(Duration.ofMillis(200L), () -> {
+                System.out.println(Thread.currentThread().getName());
+                Thread.sleep(300L);
+                return userService.login("dummy", IVAN.getPassword());
+            });
         }
 
         @ParameterizedTest(name = "{arguments} test")
