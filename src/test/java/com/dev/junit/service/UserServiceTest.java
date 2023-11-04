@@ -19,6 +19,8 @@ import static org.assertj.core.api.Assertions.*;
 import static org.hamcrest.collection.IsEmptyCollection.*;
 import static org.junit.jupiter.api.Assertions.*;
 
+/** JUnit 5. 14. Extension Model. Теория */
+
 @Tag("fast")
 @Tag("user")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -153,7 +155,7 @@ class UserServiceTest {
             System.out.println(Thread.currentThread().getName());
             var result = assertTimeoutPreemptively(Duration.ofMillis(200L), () -> {
                 System.out.println(Thread.currentThread().getName());
-                Thread.sleep(300L);
+                Thread.sleep(100L);
                 return userService.login("dummy", IVAN.getPassword());
             });
         }
