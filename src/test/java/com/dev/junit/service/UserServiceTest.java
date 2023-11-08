@@ -90,6 +90,10 @@ class UserServiceTest extends TestBase {
                 .thenReturn(true)
                 .thenReturn(false);*/
 
+        //BDDMockito.given(userDao.delete(IVAN.getId())).willReturn(true);
+
+        //BDDMockito.willReturn(true).given(userDao).delete(IVAN.getId());
+
         var deleteResult = userService.delete(IVAN.getId());
         System.out.println(userService.delete(IVAN.getId()));
         System.out.println(userService.delete(IVAN.getId()));
@@ -122,6 +126,11 @@ class UserServiceTest extends TestBase {
 
     @Test
     void usersSizeIfUserAdded() {
+        // given
+
+        // when
+
+        // then
         System.out.println("Test 2: " + this);
         userService.add(IVAN);
         userService.add(PETR);
