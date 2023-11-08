@@ -1,6 +1,7 @@
 package com.dev.junit.service;
 
 import com.dev.junit.TestBase;
+import com.dev.junit.dao.UserDao;
 import com.dev.junit.dto.User;
 import com.dev.junit.extension.*;
 import org.hamcrest.MatcherAssert;
@@ -9,6 +10,7 @@ import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.*;
+import org.mockito.Mockito;
 
 import java.io.IOException;
 import java.time.Duration;
@@ -31,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @ExtendWith({
         UserServiceParamResolver.class,
         PostProcessingExtension.class,
-        ThrowableExtension.class
+        //ThrowableExtension.class
         //ConditionalExtension.class
         //GlobalExtension.class
 })
@@ -40,6 +42,7 @@ class UserServiceTest extends TestBase {
     private static final User IVAN = User.of(1, "Ivan", "123");
     private static final User PETR = User.of(2, "Petr", "111");
 
+    private UserDao userDao;
     private UserService userService;
 
     UserServiceTest(TestInfo testInfo) {
@@ -52,9 +55,27 @@ class UserServiceTest extends TestBase {
     }
 
     @BeforeEach
-    void prepare(UserService userService) {
+    void prepare() {
         System.out.println("Before each: " + this);
-        this.userService = userService;
+        this.userDao = Mockito.mock(UserDao.class);
+        this.userService = new UserService(userDao);
+    }
+
+    @Test
+    void shouldDeleteExistedUser() {
+        userService.add(IVAN);
+        //Mockito.doReturn(true).when(userDao).delete(IVAN.getId());
+        //Mockito.doReturn(true).when(userDao).delete(Mockito.any());
+
+        Mockito.when(userDao.delete(IVAN.getId()))
+                .thenReturn(true)
+                .thenReturn(false);
+
+        var deleteResult = userService.delete(IVAN.getId());
+        System.out.println(userService.delete(IVAN.getId()));
+        System.out.println(userService.delete(IVAN.getId()));
+
+        assertThat(deleteResult).isTrue();
     }
 
     @Test
